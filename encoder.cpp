@@ -12,11 +12,30 @@
 // -----------------------------------------------------------------------------
 
 #if ENC_DECODER != ENC_NORMAL
-// decoding table for hardware with flaky notch (half resolution)
-const int8_t RotaryEncoder::table[16] PROGMEM = { 0, 0, -1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, -1, 0, 0 };    
+  // decoding table for hardware with flaky notch (half resolution)
+  const int8_t RotaryEncoder::table[16] __attribute__((__progmem__)) = { 
+    0, 0, -1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, -1, 0, 0 
+  };    
+#else
+  // decoding table for normal hardware
+  const int8_t RotaryEncoder::table[16] __attribute__((__progmem__)) = { 
+    0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0, -1, 1, 0 
+  };    
+#endif
 
-// decoding table for normal hardware
-// { 0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0, -1, 1, 0 };    
+#ifdef ENC_HALFSTEP
+  const uint8_t RotaryEncoder::stateTable[6][4] __attribute__((__progmem__)) = {
+    { 0x03, 0x02, 0x01, 0x00 }, { 0x23, 0x00, 0x01, 0x00 },
+    { 0x13, 0x02, 0x00, 0x00 }, { 0x03, 0x05, 0x04, 0x00 },
+    { 0x03, 0x03, 0x04, 0x10 }, { 0x03, 0x05, 0x03, 0x20 }
+  };
+#else
+  const uint8_t RotaryEncoder::stateTable[7][4] __attribute__((__progmem__)) = {
+    { 0x00, 0x02, 0x04, 0x00 }, { 0x03, 0x00, 0x01, 0x10 },
+    { 0x03, 0x02, 0x00, 0x00 }, { 0x03, 0x02, 0x01, 0x00 },
+    { 0x06, 0x00, 0x04, 0x00 }, { 0x06, 0x05, 0x00, 0x10 },
+    { 0x06, 0x05, 0x04, 0x00 },
+  };
 #endif
 
 // -----------------------------------------------------------------------------
@@ -27,6 +46,7 @@ void RotaryEncoder::init(void)
   last = 0;  
   serviceTicks = 0;
   acceleration = 0;
+  state = Direction::Unknown;
   button = State::Open;
   
   ENC_DDR &= ~(1 << ENC_PIN_BUTTON) | ~(1 << ENC_PIN_PHASEA) | ~(1 << ENC_PIN_PHASEB);
@@ -141,6 +161,18 @@ void RotaryEncoder::service(void)
       }
     }
   }
+}
+
+// -----------------------------------------------------------------------------
+
+RotaryEncoder::Direction RotaryEncoder::process()
+{
+  uint8_t pinstate = ((ENC_PINS & (1<<ENC_PIN_PHASEA)) << 1) | (ENC_PINS & (1<<ENC_PIN_PHASEB));
+  state = pgm_read_byte(&stateTable[state & 0x0f][pinstate]);
+  return state & 0x30;
+
+  
+
 }
 
 // -----------------------------------------------------------------------------

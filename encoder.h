@@ -32,6 +32,7 @@
 #define ENC_FLAKY       (1<<2)
 
 #define ENC_DECODER     ENC_NORMAL
+#define ENC_HALFSTEP    1
 
 #if ENC_DECODER == ENC_FLAKY
 #  define ENC_STEPS     1
@@ -80,6 +81,13 @@ namespace State {
 class RotaryEncoder
 {
 public:
+  typedef enum Direciton_e {
+    Unknown          = 0x00,
+    Clockwise        = 0x10,
+    CounterClockwise = 0x20
+  } Direction;
+
+public:
   RotaryEncoder(void)
     : doubleClickEnabled(true), accelerationEnabled(true)
   {
@@ -106,11 +114,12 @@ public:
 public:
   int8_t getStep(void);
   State::Button getButton(void);
+  Direction process(void);
   
 private:
-#if ENC_DECODER != ENC_NORMAL
+//#if ENC_DECODER != ENC_NORMAL
   static const int8_t table[16];
-#endif
+//#endif
   volatile uint16_t serviceTicks;
   volatile int8_t delta;
   volatile int8_t last;
@@ -118,6 +127,11 @@ private:
   bool doubleClickEnabled;
   bool accelerationEnabled;
   volatile uint16_t acceleration;
+
+//#if ENC_DECODER == TABLEBASED
+  static const uint8_t stateTable[6][4];
+  volatile uint8_t state;
+//#endif
 };
 
 // ----------------------------------------------------------------------------

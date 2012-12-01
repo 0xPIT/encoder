@@ -46,7 +46,7 @@ void RotaryEncoder::init(void)
   last = 0;  
   serviceTicks = 0;
   acceleration = 0;
-  state = Direction::Unknown;
+  state = DirectionUnknown;
   button = State::Open;
   
   ENC_DDR &= ~(1 << ENC_PIN_BUTTON) | ~(1 << ENC_PIN_PHASEA) | ~(1 << ENC_PIN_PHASEB);
@@ -169,10 +169,16 @@ RotaryEncoder::Direction RotaryEncoder::process()
 {
   uint8_t pinstate = ((ENC_PINS & (1<<ENC_PIN_PHASEA)) << 1) | (ENC_PINS & (1<<ENC_PIN_PHASEB));
   state = pgm_read_byte(&stateTable[state & 0x0f][pinstate]);
-  return state & 0x30;
-
   
+  //  return state & 0x30;
+  if (state & 0x30 == Clockwise) {
+    return Clockwise;
+  }
+  else if (state & 0x30 == CounterClockwise) {
+    return CounterClockwise;
+  }
 
+  return DirectionUnknown;
 }
 
 // -----------------------------------------------------------------------------

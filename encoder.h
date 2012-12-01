@@ -82,7 +82,7 @@ class RotaryEncoder
 {
 public:
   typedef enum Direciton_e {
-    Unknown          = 0x00,
+    DirectionUnknown = 0x00,
     Clockwise        = 0x10,
     CounterClockwise = 0x20
   } Direction;

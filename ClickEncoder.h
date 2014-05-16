@@ -22,8 +22,8 @@
 
 // ----------------------------------------------------------------------------
 
-#define ENC_NORMAL        (1 << 1)   // uses Peter Danneger's decoder
-#define ENC_FLAKY         (1 << 2)   // uses Table-based decoder
+#define ENC_NORMAL        (1 << 1)   // use Peter Danneger's decoder
+#define ENC_FLAKY         (1 << 2)   // use Table-based decoder
 
 // ----------------------------------------------------------------------------
 
@@ -31,17 +31,15 @@
 #  define ENC_DECODER     ENC_NORMAL
 #endif
 
-// ----------------------------------------------------------------------------
-
 #if ENC_DECODER == ENC_FLAKY
 #  define ENC_STEPS       1
 #  ifndef ENC_HALFSTEP
-#    define ENC_HALFSTEP  1        // use table for half step
+#    define ENC_HALFSTEP  1        // use table for half step per default
 #  endif
-#else
-#  ifndef ENC_STEPS
-#    define ENC_STEPS     2        // Encoder Type: 1, 2 or 4 steps per notch
-#  endif
+#endif
+
+#ifndef ENC_STEPS
+#  define ENC_STEPS     2        // Encoder Type: 1, 2 or 4 steps per notch
 #endif
 
 // ----------------------------------------------------------------------------
@@ -63,12 +61,16 @@ public:
   } Button;
 
 public:
-  ClickEncoder(uint8_t A, uint8_t B, uint8_t BTN, bool active = LOW);
-  
+  ClickEncoder(uint8_t A, uint8_t B, uint8_t BTN = -1, bool active = LOW);
+  void service(void);  
+  int16_t getValue(void);
+
+#ifndef WITHOUT_BUTTON
 public:
-  void init(void);
-  void service(void);
-  
+  Button getButton(void);
+#endif
+
+#ifndef WITHOUT_BUTTON
 public:
   void setDoubleClickEnabled(const bool &d)
   {
@@ -79,7 +81,9 @@ public:
   {
     return doubleClickEnabled;
   }
+#endif
 
+public:
   void setAccelerationEnabled(const bool &a)
   {
     accelerationEnabled = a;
@@ -93,25 +97,21 @@ public:
     return accelerationEnabled;
   }
 
-public:
-  int16_t getValue(void);
-  Button getButton(void);
-  
 private:
   const uint8_t pinA;
   const uint8_t pinB;
   const uint8_t pinBTN;
   const bool pinsActive;
-
-  volatile uint16_t serviceTicks;
   volatile int16_t delta;
   volatile int16_t last;
+  volatile uint16_t acceleration;
+#if ENC_DECODER != ENC_NORMAL
+  static const int8_t table[16];
+#endif
+#ifndef WITHOUT_BUTTON
   volatile Button button;
   bool doubleClickEnabled;
   bool accelerationEnabled;
-  volatile uint16_t acceleration;
-#if ENC_DECODER == ENC_FLAKY
-  static const int8_t table[16];
 #endif
 };
 

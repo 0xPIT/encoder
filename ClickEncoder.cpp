@@ -9,7 +9,6 @@
 // http://www.mikrocontroller.net/articles/Drehgeber
 // ----------------------------------------------------------------------------
 
-#include "Arduino.h"
 #include "ClickEncoder.h"
 
 // ----------------------------------------------------------------------------
@@ -20,7 +19,7 @@
 #define ENC_HOLDTIME        1200  // report held button after 1.2s
 
 // ----------------------------------------------------------------------------
-// Acceleration configuration
+// Acceleration configuration (for 1000Hz calls to ::service())
 //
 #define ENC_ACCEL_TOP      3072   // max. acceleration: *12 (val >> 8)
 #define ENC_ACCEL_INC        25
@@ -28,7 +27,7 @@
 
 // ----------------------------------------------------------------------------
 
-#if ENC_DECODER == ENC_FLAKY
+#if ENC_DECODER != ENC_NORMAL
 #  ifdef ENC_HALFSTEP
      // decoding table for hardware with flaky notch (half resolution)
      const int8_t ClickEncoder::table[16] __attribute__((__progmem__)) = { 
@@ -44,11 +43,11 @@
 
 // ----------------------------------------------------------------------------
 
-ClickEncoder::ClickEncoder(uint8_t A, uint8_t B, uint8_t BTN, bool activeLow)
+ClickEncoder::ClickEncoder(uint8_t A, uint8_t B, uint8_t BTN, bool active)
   : doubleClickEnabled(true), accelerationEnabled(true),
     delta(0), last(0), acceleration(0),
     button(Open),
-    pinA(A), pinB(B), pinBTN(BTN), pinsActive(activeLow)
+    pinA(A), pinB(B), pinBTN(BTN), pinsActive(active)
 {
   uint8_t configType = (pinsActive == LOW) ? INPUT_PULLUP : INPUT;
   pinMode(pinA, configType);
@@ -126,6 +125,7 @@ void ClickEncoder::service(void)
 
   // handle button
   //
+#ifndef WITHOUT_BUTTON
   static uint16_t keyDownTicks = 0;
   static uint8_t doubleClickTicks = 0;
   static unsigned long lastButtonCheck = 0;
@@ -139,7 +139,7 @@ void ClickEncoder::service(void)
         button = Held;
       }
     }
-      
+
     if (digitalRead(pinBTN) == !pinsActive) { // key is now up
       if (keyDownTicks /*> ENC_BUTTONINTERVAL*/) {
         if (button == Held) {
@@ -170,6 +170,8 @@ void ClickEncoder::service(void)
       }
     }
   }
+#endif // WITHOUT_BUTTON
+
 }
 
 // ----------------------------------------------------------------------------
@@ -214,6 +216,7 @@ int16_t ClickEncoder::getValue(void)
 
 // ----------------------------------------------------------------------------
 
+#ifndef WITHOUT_BUTTON
 ClickEncoder::Button ClickEncoder::getButton(void)
 {
   ClickEncoder::Button ret = button;
@@ -222,3 +225,4 @@ ClickEncoder::Button ClickEncoder::getButton(void)
   }
   return ret;
 }
+#endif

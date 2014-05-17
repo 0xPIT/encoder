@@ -43,10 +43,10 @@
 
 // ----------------------------------------------------------------------------
 
-ClickEncoder::ClickEncoder(uint8_t A, uint8_t B, uint8_t BTN, bool active)
+ClickEncoder::ClickEncoder(uint8_t A, uint8_t B, uint8_t BTN, bool active, uint8_t stepsPerNotch)
   : doubleClickEnabled(true), accelerationEnabled(true),
     delta(0), last(0), acceleration(0),
-    button(Open),
+    button(Open), steps(stepsPerNotch),
     pinA(A), pinB(B), pinBTN(BTN), pinsActive(active)
 {
   uint8_t configType = (pinsActive == LOW) ? INPUT_PULLUP : INPUT;
@@ -183,23 +183,14 @@ int16_t ClickEncoder::getValue(void)
   cli();
   val = delta;
 
-#if ENC_STEPS == 1
-  delta = 0;
-#elif ENC_STEPS == 2
-  delta = val & 1;
-#elif ENC_STEPS == 4
-  delta = val & 3;
-#else
-# error "Error: #define ENC_STEPS per notch to [1|2|4]"
-#endif
+  if (steps == 2) delta = val & 1;
+  else if (steps == 4) delta = val & 3;
+  else delta = 0; // default to 1 step per notch
 
   sei();
   
-#if ENC_STEPS == 4
-  val >>= 2;
-#elif ENC_STEPS == 2
-  val >>= 1;
-#endif
+  if (steps == 4) val >>= 2;
+  if (steps == 2) val >>= 1;
 
   int16_t r = 0;
   int16_t accel = ((accelerationEnabled) ? (acceleration >> 8) : 0);

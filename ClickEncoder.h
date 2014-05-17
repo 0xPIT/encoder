@@ -32,14 +32,9 @@
 #endif
 
 #if ENC_DECODER == ENC_FLAKY
-#  define ENC_STEPS       1
 #  ifndef ENC_HALFSTEP
 #    define ENC_HALFSTEP  1        // use table for half step per default
 #  endif
-#endif
-
-#ifndef ENC_STEPS
-#  define ENC_STEPS     2        // Encoder Type: 1, 2 or 4 steps per notch
 #endif
 
 // ----------------------------------------------------------------------------
@@ -61,7 +56,9 @@ public:
   } Button;
 
 public:
-  ClickEncoder(uint8_t A, uint8_t B, uint8_t BTN = -1, bool active = LOW);
+  ClickEncoder(uint8_t A, uint8_t B, uint8_t BTN = -1, 
+               bool active = LOW, uint8_t stepsPerNotch = 1);
+
   void service(void);  
   int16_t getValue(void);
 
@@ -104,6 +101,7 @@ private:
   const bool pinsActive;
   volatile int16_t delta;
   volatile int16_t last;
+  uint8_t steps;
   volatile uint16_t acceleration;
 #if ENC_DECODER != ENC_NORMAL
   static const int8_t table[16];

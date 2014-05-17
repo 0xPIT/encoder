@@ -12,6 +12,8 @@ Atmel AVR C++ RotaryEncoder with Button Implementation.
 
 Encoder and button can be connected to any input pin, as this library requires it's timer interrupt service routine ClickEncoder:service() to be called every millisecond. The example uses [TimerOne] for that.
 
+See the example application [ClickEncoderTest] for details,
+or see it in action at my modified [reflow oven controller]
 
 ### Encoder
 The library supports **acceleration**, so when the encoder is rotated faster, the encoders value will increment faster.
@@ -41,8 +43,8 @@ If your encoder does not have a button, and you need to save program memory, use
 prior including `ClickEncoder.h`, and ignore the third parameter `BTN` of the constructor.
 
 
-Please see `examples/ClickEncoderTest/ClickEncoderTest.ino` for usage.
-
-
 [TimerOne]:http://playground.arduino.cc/Code/Timer1
 [Branch arduino]:https://github.com/0xPIT/encoder/tree/arduino
+[ClickEncoderTest]:https://github.com/0xPIT/encoder/blob/arduino/examples/ClickEncoderTest/ClickEncoderTest.ino
+[reflow oven controller]:https://github.com/0xPIT/reflowOvenController
+

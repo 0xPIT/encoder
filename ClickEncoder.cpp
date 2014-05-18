@@ -130,7 +130,9 @@ void ClickEncoder::service(void)
   static uint8_t doubleClickTicks = 0;
   static unsigned long lastButtonCheck = 0;
 
-  if ((now - lastButtonCheck) >= (ENC_BUTTONINTERVAL)) { // checking button is sufficient every 10-30ms
+  if (pinBTN > 0 // check button only, if a pin has been provided
+      && (now - lastButtonCheck) >= ENC_BUTTONINTERVAL) // checking button is sufficient every 10-30ms
+  { 
     lastButtonCheck = now;
     
     if (digitalRead(pinBTN) == pinsActive) { // key is down

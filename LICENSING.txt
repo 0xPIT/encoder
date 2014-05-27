@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------------- 
 //
-// Copyright (c) 2012, karl@pitrich.com
+// Copyright (c) 2010-2014, karl@pitrich.com
 // Copyright by authors stated in the source code files
 // All rights reserved.
 //

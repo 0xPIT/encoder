@@ -213,7 +213,7 @@ int16_t ClickEncoder::getValue(void)
 ClickEncoder::Button ClickEncoder::getButton(void)
 {
   ClickEncoder::Button ret = button;
-  if (button != ClickEncoder::Held) {
+  if (button != ClickEncoder::Held && ret != ClickEncoder::Open) {
     button = ClickEncoder::Open; // reset
   }
   return ret;

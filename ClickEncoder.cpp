@@ -28,7 +28,7 @@
 // ----------------------------------------------------------------------------
 
 #if ENC_DECODER != ENC_NORMAL
-#  ifdef ENC_HALFSTEP
+#  if ENC_HALFSTEP
      // decoding table for hardware with flaky notch (half resolution)
      const int8_t ClickEncoder::table[16] __attribute__((__progmem__)) = { 
        0, 0, -1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, -1, 0, 0 
@@ -89,7 +89,7 @@ void ClickEncoder::service(void)
     last |= 1;
   }
 
-  uint8_t tbl = pgm_read_byte(&table[last]); 
+  int8_t tbl = pgm_read_byte(&table[last]); 
   if (tbl) {
     delta += tbl;
     moved = true;

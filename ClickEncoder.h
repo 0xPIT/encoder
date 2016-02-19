@@ -122,6 +122,9 @@ private:
   volatile Button button;
   bool doubleClickEnabled;
   bool buttonHeldEnabled;
+  uint16_t keyDownTicks = 0;
+  uint8_t doubleClickTicks = 0;
+  unsigned long lastButtonCheck = 0;
 #endif
 };
 

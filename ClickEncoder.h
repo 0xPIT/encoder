@@ -78,6 +78,17 @@ public:
   {
     return doubleClickEnabled;
   }
+  
+public:
+  void setButtonHeldEnabled(const bool &d)
+  {
+    buttonHeldEnabled = d;
+  }
+
+  const bool getButtonHeldEnabled()
+  {
+    return buttonHeldEnabled;
+  }
 #endif
 
 public:
@@ -110,6 +121,7 @@ private:
 #ifndef WITHOUT_BUTTON
   volatile Button button;
   bool doubleClickEnabled;
+  bool buttonHeldEnabled;
 #endif
 };
 

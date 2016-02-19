@@ -44,7 +44,7 @@
 // ----------------------------------------------------------------------------
 
 ClickEncoder::ClickEncoder(uint8_t A, uint8_t B, uint8_t BTN, uint8_t stepsPerNotch, bool active)
-  : doubleClickEnabled(true), accelerationEnabled(true),
+  : doubleClickEnabled(true),buttonHeldEnabled(true), accelerationEnabled(true),
     delta(0), last(0), acceleration(0),
     button(Open), steps(stepsPerNotch),
     pinA(A), pinB(B), pinBTN(BTN), pinsActive(active)
@@ -137,7 +137,7 @@ void ClickEncoder::service(void)
     
     if (digitalRead(pinBTN) == pinsActive) { // key is down
       keyDownTicks++;
-      if (keyDownTicks > (ENC_HOLDTIME / ENC_BUTTONINTERVAL)) {
+      if ((keyDownTicks > (ENC_HOLDTIME / ENC_BUTTONINTERVAL)) && (buttonHeldEnabled)) {
         button = Held;
       }
     }

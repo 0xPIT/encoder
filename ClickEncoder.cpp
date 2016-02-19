@@ -43,16 +43,18 @@
 
 // ----------------------------------------------------------------------------
 
-ClickEncoder::ClickEncoder(uint8_t A, uint8_t B, uint8_t BTN, uint8_t stepsPerNotch, bool active)
+ClickEncoder::ClickEncoder(int8_t A, int8_t B, int8_t BTN, uint8_t stepsPerNotch, bool active)
   : doubleClickEnabled(true),buttonHeldEnabled(true), accelerationEnabled(true),
     delta(0), last(0), acceleration(0),
     button(Open), steps(stepsPerNotch),
     pinA(A), pinB(B), pinBTN(BTN), pinsActive(active)
 {
   uint8_t configType = (pinsActive == LOW) ? INPUT_PULLUP : INPUT;
-  pinMode(pinA, configType);
-  pinMode(pinB, configType);
-  pinMode(pinBTN, configType);
+  if (pinA >= 0) {pinMode(pinA, configType);}
+  if (pinB >= 0) {pinMode(pinB, configType);}
+#ifndef WITHOUT_BUTTON
+  if (pinBTN >= 0) {pinMode(pinBTN, configType);}
+#endif
   
   if (digitalRead(pinA) == pinsActive) {
     last = 3;
@@ -64,6 +66,20 @@ ClickEncoder::ClickEncoder(uint8_t A, uint8_t B, uint8_t BTN, uint8_t stepsPerNo
 }
 
 // ----------------------------------------------------------------------------
+#ifndef WITHOUT_BUTTON
+
+ClickEncoder::ClickEncoder(int8_t BTN, bool active)
+  : doubleClickEnabled(true),buttonHeldEnabled(true), accelerationEnabled(true),
+    delta(0), last(0), acceleration(0),
+    button(Open), steps(1),
+    pinA(-1), pinB(-1), pinBTN(BTN), pinsActive(active)
+{
+  uint8_t configType = (pinsActive == LOW) ? INPUT_PULLUP : INPUT;
+  if (pinBTN >= 0) {pinMode(pinBTN, configType);}
+}
+#endif
+
+// ----------------------------------------------------------------------------
 // call this every 1 millisecond via timer ISR
 //
 void ClickEncoder::service(void)
@@ -71,6 +87,7 @@ void ClickEncoder::service(void)
   bool moved = false;
   unsigned long now = millis();
 
+  if (pinA >= 0 && pinA >= 0) {
   if (accelerationEnabled) { // decelerate every tick
     acceleration -= ENC_ACCEL_DEC;
     if (acceleration & 0x8000) { // handle overflow of MSB is set
@@ -122,12 +139,12 @@ void ClickEncoder::service(void)
       acceleration += ENC_ACCEL_INC;
     }
   }
-
+}
   // handle button
   //
 #ifndef WITHOUT_BUTTON
 
-  if (pinBTN > 0 // check button only, if a pin has been provided
+  if (pinBTN >= 0 // check button only, if a pin has been provided
       && (now - lastButtonCheck) >= ENC_BUTTONINTERVAL) // checking button is sufficient every 10-30ms
   { 
     lastButtonCheck = now;

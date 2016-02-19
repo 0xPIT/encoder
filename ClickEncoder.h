@@ -56,8 +56,12 @@ public:
   } Button;
 
 public:
-  ClickEncoder(uint8_t A, uint8_t B, uint8_t BTN = -1, 
+  ClickEncoder(int8_t A, int8_t B, int8_t BTN = -1, 
                uint8_t stepsPerNotch = 1, bool active = LOW);
+			   
+#ifndef WITHOUT_BUTTON
+  explicit ClickEncoder(int8_t BTN, bool active = LOW);
+#endif
 
   void service(void);  
   int16_t getValue(void);
@@ -106,9 +110,9 @@ public:
   }
 
 private:
-  const uint8_t pinA;
-  const uint8_t pinB;
-  const uint8_t pinBTN;
+  const int8_t pinA;
+  const int8_t pinB;
+  const int8_t pinBTN;
   const bool pinsActive;
   volatile int16_t delta;
   volatile int16_t last;

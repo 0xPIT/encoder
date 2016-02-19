@@ -167,7 +167,7 @@ void ClickEncoder::service(void)
   
     if (doubleClickTicks > 0) {
       doubleClickTicks--;
-      if (--doubleClickTicks == 0) {
+      if (doubleClickTicks == 0) {
         button = Clicked;
       }
     }

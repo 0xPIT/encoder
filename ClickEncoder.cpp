@@ -144,8 +144,8 @@ void ClickEncoder::service(void)
   //
 #ifndef WITHOUT_BUTTON
 
-  if (pinBTN >= 0 // check button only, if a pin has been provided
-      && (now - lastButtonCheck) >= ENC_BUTTONINTERVAL) // checking button is sufficient every 10-30ms
+  if ((pinBTN > 0 || (pinBTN == 0 && buttonOnPinZeroEnabled))        // check button only, if a pin has been provided
+      && (now - lastButtonCheck) >= ENC_BUTTONINTERVAL)            // checking button is sufficient every 10-30ms
   { 
     lastButtonCheck = now;
     

@@ -93,6 +93,17 @@ public:
   {
     return buttonHeldEnabled;
   }
+  
+public:
+  void setButtonOnPinZeroEnabled(const bool &d)
+  {
+    buttonOnPinZeroEnabled = d;
+  }
+
+  const bool getButtonOnPinZeroEnabled()
+  {
+    return buttonOnPinZeroEnabled;
+  }
 #endif
 
 public:
@@ -126,6 +137,7 @@ private:
   volatile Button button;
   bool doubleClickEnabled;
   bool buttonHeldEnabled;
+  bool buttonOnPinZeroEnabled = false;
   uint16_t keyDownTicks = 0;
   uint8_t doubleClickTicks = 0;
   unsigned long lastButtonCheck = 0;

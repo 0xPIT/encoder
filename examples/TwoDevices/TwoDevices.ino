@@ -35,6 +35,12 @@ void setup() {
   
   button.setButtonHeldEnabled(true);
   button.setDoubleClickEnabled(false);
+  
+  // Enable the button to be on pin 0.  Normally pin 0 is not recognized as a valid pin for a button,
+  // this is to maintain backward compatibility with an old version of the library
+  // This version can have the button on pin zero, and this call enables the feature.
+  // in this version best to use pin -1 instead of 0 to disable button functions
+  encoder.setButtonOnPinZeroEnabled(false);
 
 }
 

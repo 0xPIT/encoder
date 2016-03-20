@@ -157,7 +157,7 @@ void ClickEncoder::service(void)
     }
 
     if (digitalRead(pinBTN) == !pinsActive) { // key is now up
-      if (keyDownTicks /*> ENC_BUTTONINTERVAL*/) {
+      if (keyDownTicks > 1) {               //Make sure key was down through 1 complete tick to prevent random transients from registering as click
         if (button == Held) {
           button = Released;
           doubleClickTicks = 0;

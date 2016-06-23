@@ -15,7 +15,7 @@
 // ----------------------------------------------------------------------------
 
 #include <stdint.h>
-#ifndef ARDUINO_ARCH_ESP8266
+#if defined(__AVR__)
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>

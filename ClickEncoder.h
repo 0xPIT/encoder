@@ -12,6 +12,12 @@
 #ifndef __have__ClickEncoder_h__
 #define __have__ClickEncoder_h__
 
+// ---Button defaults-------------------------------------------------------------
+
+#define BTN_DOUBLECLICKTIME  400  // second click within 400ms
+#define BTN_HOLDTIME        1000  // report held button after 1s
+
+
 // ----------------------------------------------------------------------------
 
 #include <stdint.h>
@@ -74,6 +80,18 @@ public:
 #endif
 
 #ifndef WITHOUT_BUTTON
+public:
+  void setDoubleClickTime(uint16_t durationMilliseconds)
+  {
+    buttonDoubleClickTime = durationMilliseconds;
+  }
+  
+public:
+  void setHoldTime(uint16_t durationMilliseconds)
+  {
+    buttonHoldTime = durationMilliseconds;
+  }
+  
 public:
   void setDoubleClickEnabled(const bool &d)
   {
@@ -141,7 +159,9 @@ private:
   bool buttonHeldEnabled;
   bool buttonOnPinZeroEnabled = false;
   uint16_t keyDownTicks = 0;
-  uint8_t doubleClickTicks = 0;
+  uint16_t doubleClickTicks = 0;
+  uint16_t buttonHoldTime = BTN_HOLDTIME;
+  uint16_t buttonDoubleClickTime = BTN_DOUBLECLICKTIME;
   unsigned long lastButtonCheck = 0;
 #endif
 };

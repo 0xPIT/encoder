@@ -15,8 +15,6 @@
 // Button configuration (values for 1ms timer service calls)
 //
 #define ENC_BUTTONINTERVAL    10  // check button every x milliseconds, also debouce time
-#define ENC_DOUBLECLICKTIME  400  // second click within 600ms
-#define ENC_HOLDTIME        1200  // report held button after 1.2s
 
 // ----------------------------------------------------------------------------
 // Acceleration configuration (for 1000Hz calls to ::service())
@@ -85,7 +83,6 @@ ClickEncoder::ClickEncoder(int8_t BTN, bool active)
 void ClickEncoder::service(void)
 {
   bool moved = false;
-  unsigned long now = millis();
 
   if (pinA >= 0 && pinA >= 0) {
   if (accelerationEnabled) { // decelerate every tick
@@ -143,15 +140,16 @@ void ClickEncoder::service(void)
   // handle button
   //
 #ifndef WITHOUT_BUTTON
-
+  unsigned long currentMillis = millis();
+  if (currentMillis < lastButtonCheck) lastButtonCheck = 0;        // Handle case when millis() wraps back around to zero
   if ((pinBTN > 0 || (pinBTN == 0 && buttonOnPinZeroEnabled))        // check button only, if a pin has been provided
-      && (now - lastButtonCheck) >= ENC_BUTTONINTERVAL)            // checking button is sufficient every 10-30ms
+      && ((currentMillis - lastButtonCheck) >= ENC_BUTTONINTERVAL))            // checking button is sufficient every 10-30ms
   { 
-    lastButtonCheck = now;
+    lastButtonCheck = currentMillis;
     
     if (digitalRead(pinBTN) == pinsActive) { // key is down
       keyDownTicks++;
-      if ((keyDownTicks > (ENC_HOLDTIME / ENC_BUTTONINTERVAL)) && (buttonHeldEnabled)) {
+      if ((keyDownTicks > (buttonHoldTime / ENC_BUTTONINTERVAL)) && (buttonHeldEnabled)) {
         button = Held;
       }
     }
@@ -165,13 +163,13 @@ void ClickEncoder::service(void)
         else {
           #define ENC_SINGLECLICKONLY 1
           if (doubleClickTicks > ENC_SINGLECLICKONLY) {   // prevent trigger in single click mode
-            if (doubleClickTicks < (ENC_DOUBLECLICKTIME / ENC_BUTTONINTERVAL)) {
+            if (doubleClickTicks < (buttonDoubleClickTime / ENC_BUTTONINTERVAL)) {
               button = DoubleClicked;
               doubleClickTicks = 0;
             }
           }
           else {
-            doubleClickTicks = (doubleClickEnabled) ? (ENC_DOUBLECLICKTIME / ENC_BUTTONINTERVAL) : ENC_SINGLECLICKONLY;
+            doubleClickTicks = (doubleClickEnabled) ? (buttonDoubleClickTime / ENC_BUTTONINTERVAL) : ENC_SINGLECLICKONLY;
           }
         }
       }

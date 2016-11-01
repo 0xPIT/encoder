@@ -46,6 +46,9 @@ ClickEncoder::ClickEncoder(int8_t A, int8_t B, int8_t BTN, uint8_t stepsPerNotch
     delta(0), last(0), acceleration(0),
     button(Open), steps(stepsPerNotch),
     pinA(A), pinB(B), pinBTN(BTN), pinsActive(active)
+#ifndef WITHOUT_BUTTON
+    , analogInput(false)
+#endif
 {
   uint8_t configType = (pinsActive == LOW) ? INPUT_PULLUP : INPUT;
   if (pinA >= 0) {pinMode(pinA, configType);}
@@ -69,11 +72,29 @@ ClickEncoder::ClickEncoder(int8_t A, int8_t B, int8_t BTN, uint8_t stepsPerNotch
 ClickEncoder::ClickEncoder(int8_t BTN, bool active)
   : doubleClickEnabled(true),buttonHeldEnabled(true), accelerationEnabled(true),
     delta(0), last(0), acceleration(0),
-    button(Open), steps(1),
+    button(Open), steps(1), analogInput(false),
     pinA(-1), pinB(-1), pinBTN(BTN), pinsActive(active)
 {
   uint8_t configType = (pinsActive == LOW) ? INPUT_PULLUP : INPUT;
   if (pinBTN >= 0) {pinMode(pinBTN, configType);}
+}
+
+// ----------------------------------------------------------------------------
+// Constructor for using analog input range as a button
+
+ClickEncoder::ClickEncoder(int8_t BTN, int16_t rangeLow, int16_t rangeHigh)
+  : doubleClickEnabled(true),buttonHeldEnabled(true), accelerationEnabled(true),
+    delta(0), last(0), acceleration(0),
+    button(Open), steps(1), analogInput(true),
+    pinA(-1), pinB(-1), pinBTN(BTN), pinsActive(LOW), anlogActiveRangeLow(rangeLow), anlogActiveRangeHigh(rangeHigh)
+{
+  pinMode(pinBTN, INPUT);
+  
+  if (anlogActiveRangeLow > anlogActiveRangeHigh) {    // swap values if provided in the wrong order
+	  int16_t t = anlogActiveRangeLow;
+	  anlogActiveRangeLow = anlogActiveRangeHigh;
+	  anlogActiveRangeHigh = t;
+  }
 }
 #endif
 
@@ -146,15 +167,17 @@ void ClickEncoder::service(void)
       && ((currentMillis - lastButtonCheck) >= ENC_BUTTONINTERVAL))            // checking button is sufficient every 10-30ms
   { 
     lastButtonCheck = currentMillis;
+
+    bool pinRead = getPinState();
     
-    if (digitalRead(pinBTN) == pinsActive) { // key is down
+    if (pinRead == pinsActive) { // key is down
       keyDownTicks++;
       if ((keyDownTicks > (buttonHoldTime / ENC_BUTTONINTERVAL)) && (buttonHeldEnabled)) {
         button = Held;
       }
     }
 
-    if (digitalRead(pinBTN) == !pinsActive) { // key is now up
+    if (pinRead == !pinsActive) { // key is now up
       if (keyDownTicks > 1) {               //Make sure key was down through 1 complete tick to prevent random transients from registering as click
         if (button == Held) {
           button = Released;
@@ -224,10 +247,25 @@ int16_t ClickEncoder::getValue(void)
 #ifndef WITHOUT_BUTTON
 ClickEncoder::Button ClickEncoder::getButton(void)
 {
+  noInterrupts();
   ClickEncoder::Button ret = button;
   if (button != ClickEncoder::Held && ret != ClickEncoder::Open) {
     button = ClickEncoder::Open; // reset
   }
+  interrupts();
+
   return ret;
 }
+
+bool ClickEncoder::getPinState() {
+  bool pinState;
+  if (analogInput) {
+    int16_t pinValue = analogRead(pinBTN);
+    pinState = ((pinValue >= anlogActiveRangeLow) && (pinValue <= anlogActiveRangeHigh)) ?  LOW : HIGH;    // set result to LOW (button pressed) if analog input is in range
+  } else {
+    pinState = digitalRead(pinBTN);
+  }
+  return pinState;
+}
+
 #endif

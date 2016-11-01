@@ -69,6 +69,8 @@ public:
 			   
 #ifndef WITHOUT_BUTTON
   explicit ClickEncoder(int8_t BTN, bool active = LOW);
+  explicit ClickEncoder(int8_t BTN, int16_t rangeLow, int16_t rangeHigh);  // Constructor for using alaog input range as a button
+
 #endif
 
   void service(void);  
@@ -158,11 +160,15 @@ private:
   bool doubleClickEnabled;
   bool buttonHeldEnabled;
   bool buttonOnPinZeroEnabled = false;
+  bool analogInput = false;
   uint16_t keyDownTicks = 0;
   uint16_t doubleClickTicks = 0;
   uint16_t buttonHoldTime = BTN_HOLDTIME;
   uint16_t buttonDoubleClickTime = BTN_DOUBLECLICKTIME;
   unsigned long lastButtonCheck = 0;
+  int16_t anlogActiveRangeLow = 0;
+  int16_t anlogActiveRangeHigh = 0;
+  bool getPinState();
 #endif
 };
 

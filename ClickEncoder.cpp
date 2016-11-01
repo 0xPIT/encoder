@@ -224,8 +224,6 @@ int16_t ClickEncoder::getValue(void)
   else if (steps == 4) delta = val & 3;
   else delta = 0; // default to 1 step per notch
 
-  interrupts();
-  
   if (steps == 4) val >>= 2;
   if (steps == 2) val >>= 1;
 
@@ -238,6 +236,7 @@ int16_t ClickEncoder::getValue(void)
   else if (val > 0) {
     r += 1 + accel;
   }
+  interrupts();
 
   return r;
 }

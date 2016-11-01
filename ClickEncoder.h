@@ -149,7 +149,7 @@ private:
   const bool pinsActive;
   volatile int16_t delta;
   volatile int16_t last;
-  uint8_t steps;
+  volatile uint8_t steps;
   volatile uint16_t acceleration;
   bool accelerationEnabled;
 #if ENC_DECODER != ENC_NORMAL

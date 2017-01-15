@@ -103,13 +103,13 @@ private:
   volatile int16_t last;
   uint8_t steps;
   volatile uint16_t acceleration;
+  bool accelerationEnabled;
 #if ENC_DECODER != ENC_NORMAL
   static const int8_t table[16];
 #endif
 #ifndef WITHOUT_BUTTON
   volatile Button button;
   bool doubleClickEnabled;
-  bool accelerationEnabled;
 #endif
 };
 

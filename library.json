@@ -1,0 +1,12 @@
+{
+  "name": "ClickEncoder",
+  "keywords": "encoder, button, input",
+  "description": "Arduino library to handle rotary encoders with buttons as a user input device",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/0xPIT/encoder.git"
+  },
+  "frameworks": "arduino",
+  "platforms": "atmelavr"
+}

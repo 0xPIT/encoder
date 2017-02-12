@@ -65,7 +65,7 @@ public:
 
 public:
   ClickEncoder(int8_t A, int8_t B, int8_t BTN = -1, 
-               uint8_t stepsPerNotch = 1, bool active = LOW);
+               uint8_t stepsPerNotch = 4, bool active = LOW);
 			   
 #ifndef WITHOUT_BUTTON
   explicit ClickEncoder(int8_t BTN, bool active = LOW);

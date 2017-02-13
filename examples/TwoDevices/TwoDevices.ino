@@ -2,7 +2,7 @@
  
 This example demonstrates the use of 2 devices controlled by the ClickEncoder library
 
-In thie example, the 2 devides are a rotary encoder with built in button, and a normal momentary button
+In thie example, the 2 devices are a rotary encoder with built in button, and a normal momentary button
 
  */
 #include <ClickEncoder.h>
@@ -16,7 +16,9 @@ In thie example, the 2 devides are a rotary encoder with built in button, and a 
 
 #define EXTRA_BUTTON_PIN 8
 
-ClickEncoder button = ClickEncoder(EXTRA_BUTTON_PIN);
+// Note, using ClickEncoder to define a stand alone button has been depricated.  Use DigitalButton instead
+
+DigitalButton button = DigitalButton(EXTRA_BUTTON_PIN);
 ClickEncoder encoder = ClickEncoder(ENCODER_PINA,ENCODER_PINB,ENCODER_BTN,ENCODER_STEPS_PER_NOTCH);
 
 void timerIsr() {      //Service methods from both instances must be included

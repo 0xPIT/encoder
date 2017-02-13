@@ -69,6 +69,8 @@ ClickEncoder::ClickEncoder(int8_t A, int8_t B, int8_t BTN, uint8_t stepsPerNotch
 // ----------------------------------------------------------------------------
 #ifndef WITHOUT_BUTTON
 
+
+// Depricated.  Use DigitalButton instead
 ClickEncoder::ClickEncoder(int8_t BTN, bool active)
   : doubleClickEnabled(true),buttonHeldEnabled(true), accelerationEnabled(true),
     delta(0), last(0), acceleration(0),
@@ -80,15 +82,24 @@ ClickEncoder::ClickEncoder(int8_t BTN, bool active)
 }
 
 // ----------------------------------------------------------------------------
+// Constructor for using digital input as a button
+
+DigitalButton::DigitalButton(int8_t BTN, bool active) : ClickEncoder(BTN, active)
+
+{
+
+}
+
+// ----------------------------------------------------------------------------
 // Constructor for using analog input range as a button
 
-ClickEncoder::ClickEncoder(int8_t BTN, int16_t rangeLow, int16_t rangeHigh)
-  : doubleClickEnabled(true),buttonHeldEnabled(true), accelerationEnabled(true),
-    delta(0), last(0), acceleration(0),
-    button(Open), steps(1), analogInput(true),
-    pinA(-1), pinB(-1), pinBTN(BTN), pinsActive(LOW), anlogActiveRangeLow(rangeLow), anlogActiveRangeHigh(rangeHigh)
+AnalogButton::AnalogButton(int8_t BTN, int16_t rangeLow, int16_t rangeHigh) : ClickEncoder(BTN, false)
 {
   pinMode(pinBTN, INPUT);
+  
+  anlogActiveRangeLow = rangeLow;
+  anlogActiveRangeHigh = rangeHigh;
+  analogInput = true;
   
   if (anlogActiveRangeLow > anlogActiveRangeHigh) {    // swap values if provided in the wrong order
 	  int16_t t = anlogActiveRangeLow;

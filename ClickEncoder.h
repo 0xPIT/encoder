@@ -68,8 +68,7 @@ public:
                uint8_t stepsPerNotch = 4, bool active = LOW);
 			   
 #ifndef WITHOUT_BUTTON
-  explicit ClickEncoder(int8_t BTN, bool active = LOW);
-  explicit ClickEncoder(int8_t BTN, int16_t rangeLow, int16_t rangeHigh);  // Constructor for using alaog input range as a button
+  explicit ClickEncoder(int8_t BTN, bool active = false);   // Depricated.  Use Digtial Button instead
 
 #endif
 
@@ -142,11 +141,11 @@ public:
     return accelerationEnabled;
   }
 
-private:
-  const int8_t pinA;
-  const int8_t pinB;
-  const int8_t pinBTN;
-  const bool pinsActive;
+protected:
+  int8_t pinA;
+  int8_t pinB;
+  int8_t pinBTN;
+  bool pinsActive;
   volatile int16_t delta;
   volatile int16_t last;
   volatile uint8_t steps;
@@ -171,6 +170,21 @@ private:
   bool getPinState();
 #endif
 };
+
+#ifndef WITHOUT_BUTTON
+class AnalogButton : public ClickEncoder
+{ 
+  public:
+    explicit AnalogButton(int8_t BTN, int16_t rangeLow, int16_t rangeHigh);  // Constructor for using analog input range as a button
+};
+
+class DigitalButton : public ClickEncoder
+{ 
+  public:
+    explicit DigitalButton(int8_t BTN, bool active = false);  // Constructor for using a button only
+};
+
+#endif
 
 // ----------------------------------------------------------------------------
 

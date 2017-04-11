@@ -47,6 +47,12 @@
 
 // ----------------------------------------------------------------------------
 
+#if    defined(__arm__)
+  typedef WiringPinMode pinMode_t;
+#else
+  typedef uint8_t pinMode_t;
+#endif
+
 class ClickEncoder
 {
 public:

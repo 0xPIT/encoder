@@ -17,7 +17,7 @@ or see it in action at my modified [reflow oven controller]
 ### Encoder
 The library supports **acceleration**, so when the encoder is rotated faster, the encoders value will increment faster.
 
-Acceleration can be enabled or disabled at runtine using `setAccelerationEnabled(bool)`.
+Acceleration can be enabled or disabled at runtime using `setAccelerationEnabled(bool)`.
 
 For instance, it makes sense to disable acceleration when entering a configuration menu that will be navigated using the encoder.
 

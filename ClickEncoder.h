@@ -46,8 +46,7 @@
 #endif
 
 // ----------------------------------------------------------------------------
-
-#if    defined(__arm__)
+#if    defined(__arm__) && (defined (__STM32F1__) || defined (__STM32F4__) )
   typedef WiringPinMode pinMode_t;
 #else
   typedef uint8_t pinMode_t;

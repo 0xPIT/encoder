@@ -57,7 +57,7 @@ public:
 
 public:
   ClickEncoder(uint8_t A, uint8_t B, uint8_t BTN = -1,
-               uint8_t stepsPerNotch = 1, bool coderActive = LOW, bool btnActive = HIGH);
+               uint8_t stepsPerNotch = 1, bool coderActive = LOW, bool btnActive = LOW);
 
   void service(void);
   int16_t getValue(void);

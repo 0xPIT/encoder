@@ -1,0 +1,13 @@
+ClickEncoder	KEYWORD1
+
+setAccelerationEnabled	KEYWORD2
+getAccelerationEnabled	KEYWORD2
+getButton				KEYWORD2
+getValue				KEYWORD2
+service					KEYWORD2
+setDoubleClickTime		KEYWORD2
+setHoldTime				KEYWORD2
+setDoubleClickEnabled	KEYWORD2
+getDoubleClickEnabled	KEYWORD2
+setButtonHeldEnabled	KEYWORD2
+getButtonHeldEnabled	KEYWORD2

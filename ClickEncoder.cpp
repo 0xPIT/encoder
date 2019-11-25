@@ -44,12 +44,20 @@
 // ----------------------------------------------------------------------------
 
 ClickEncoder::ClickEncoder(uint8_t A, uint8_t B, uint8_t BTN, uint8_t stepsPerNotch, bool active)
-  : doubleClickEnabled(true), accelerationEnabled(true),
-    delta(0), last(0), acceleration(0),
-    button(Open), steps(stepsPerNotch),
-    pinA(A), pinB(B), pinBTN(BTN), pinsActive(active)
+  : 
+  pinA(A), pinB(B), pinBTN(BTN), pinsActive(active),
+  delta(0), last(0), 
+  steps(stepsPerNotch),
+  acceleration(0),
+  accelerationEnabled(true),
+  button(Open),
+  doubleClickEnabled(true)
 {
+#ifndef ARDUINO_ARCH_STM32
   uint8_t configType = (pinsActive == LOW) ? INPUT_PULLUP : INPUT;
+#else
+  WiringPinMode configType = (pinsActive == LOW) ? INPUT_PULLUP : INPUT;
+#endif
   pinMode(pinA, configType);
   pinMode(pinB, configType);
   pinMode(pinBTN, configType);
@@ -178,14 +186,18 @@ int16_t ClickEncoder::getValue(void)
 {
   int16_t val;
 
+#ifndef ARDUINO_ARCH_STM32
   cli();
+#endif
   val = delta;
 
   if (steps == 2) delta = val & 1;
   else if (steps == 4) delta = val & 3;
   else delta = 0; // default to 1 step per notch
 
+#ifndef ARDUINO_ARCH_STM32
   sei();
+#endif
 
   if (steps == 4) val >>= 2;
   if (steps == 2) val >>= 1;

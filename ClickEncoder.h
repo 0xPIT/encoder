@@ -15,9 +15,11 @@
 // ----------------------------------------------------------------------------
 
 #include <stdint.h>
+#ifdef __AVR__
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
+#endif
 #include "Arduino.h"
 
 // ----------------------------------------------------------------------------

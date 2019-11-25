@@ -15,7 +15,11 @@
 // ----------------------------------------------------------------------------
 
 #include <stdint.h>
+<<<<<<< HEAD
 #ifdef __AVR__
+=======
+#ifndef ARDUINO_ARCH_STM32
+>>>>>>> 6cd5dac4a7101760b9ef754cdae8ed62076ff78c
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>

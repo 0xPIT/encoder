@@ -4,7 +4,7 @@
 //
 // (c) 2010 karl@pitrich.com
 // (c) 2014 karl@pitrich.com
-// 
+//
 // Timer-based rotary encoder logic by Peter Dannegger
 // http://www.mikrocontroller.net/articles/Drehgeber
 // ----------------------------------------------------------------------------
@@ -30,14 +30,14 @@
 #if ENC_DECODER != ENC_NORMAL
 #  ifdef ENC_HALFSTEP
      // decoding table for hardware with flaky notch (half resolution)
-     const int8_t ClickEncoder::table[16] __attribute__((__progmem__)) = { 
-       0, 0, -1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, -1, 0, 0 
-     };    
+     const int8_t ClickEncoder::table[16] __attribute__((__progmem__)) = {
+       0, 0, -1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, -1, 0, 0
+     };
 #  else
      // decoding table for normal hardware
-     const int8_t ClickEncoder::table[16] __attribute__((__progmem__)) = { 
-       0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0, -1, 1, 0 
-     };    
+     const int8_t ClickEncoder::table[16] __attribute__((__progmem__)) = {
+       0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0, -1, 1, 0
+     };
 #  endif
 #endif
 
@@ -53,7 +53,7 @@ ClickEncoder::ClickEncoder(uint8_t A, uint8_t B, uint8_t BTN, uint8_t stepsPerNo
   pinMode(pinA, configType);
   pinMode(pinB, configType);
   pinMode(pinBTN, configType);
-  
+
   if (digitalRead(pinA) == pinsActive) {
     last = 3;
   }
@@ -89,7 +89,7 @@ void ClickEncoder::service(void)
     last |= 1;
   }
 
-  uint8_t tbl = pgm_read_byte(&table[last]); 
+  uint8_t tbl = pgm_read_byte(&table[last]);
   if (tbl) {
     delta += tbl;
     moved = true;
@@ -104,13 +104,13 @@ void ClickEncoder::service(void)
   if (digitalRead(pinB) == pinsActive) {
     curr ^= 1;
   }
-  
+
   int8_t diff = last - curr;
 
   if (diff & 1) {            // bit 0 = step
     last = curr;
     delta += (diff & 2) - 1; // bit 1 = direction (+/-)
-    moved = true;    
+    moved = true;
   }
 #else
 # error "Error: define ENC_DECODER to ENC_NORMAL or ENC_FLAKY"
@@ -126,15 +126,11 @@ void ClickEncoder::service(void)
   // handle button
   //
 #ifndef WITHOUT_BUTTON
-  static uint16_t keyDownTicks = 0;
-  static uint8_t doubleClickTicks = 0;
-  static unsigned long lastButtonCheck = 0;
-
   if (pinBTN > 0 // check button only, if a pin has been provided
       && (now - lastButtonCheck) >= ENC_BUTTONINTERVAL) // checking button is sufficient every 10-30ms
-  { 
+  {
     lastButtonCheck = now;
-    
+
     if (digitalRead(pinBTN) == pinsActive) { // key is down
       keyDownTicks++;
       if (keyDownTicks > (ENC_HOLDTIME / ENC_BUTTONINTERVAL)) {
@@ -164,7 +160,7 @@ void ClickEncoder::service(void)
 
       keyDownTicks = 0;
     }
-  
+
     if (doubleClickTicks > 0) {
       doubleClickTicks--;
       if (--doubleClickTicks == 0) {
@@ -181,7 +177,7 @@ void ClickEncoder::service(void)
 int16_t ClickEncoder::getValue(void)
 {
   int16_t val;
-  
+
   cli();
   val = delta;
 
@@ -190,7 +186,7 @@ int16_t ClickEncoder::getValue(void)
   else delta = 0; // default to 1 step per notch
 
   sei();
-  
+
   if (steps == 4) val >>= 2;
   if (steps == 2) val >>= 1;
 

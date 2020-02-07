@@ -2,9 +2,8 @@ ClickEncoder
 =============
 
 > Arduino library to handle rotary encoders **with** buttons as a user input device.
-Atmel AVR C++ RotaryEncoder with Button Implementation.
+Arduino RotaryEncoder with Button Implementation.
 
-**See Arduino Library in the [Branch arduino]**
 
 - Timer-Based: Works on any IO-Pin.
 - Supports rotary acceleration, so when the encoder is rotated faster, the encoders value will increment faster

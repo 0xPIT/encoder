@@ -43,11 +43,22 @@
 
 // ----------------------------------------------------------------------------
 
-ClickEncoder::ClickEncoder(uint8_t A, uint8_t B, uint8_t BTN, uint8_t stepsPerNotch, bool active)
-  : doubleClickEnabled(true), accelerationEnabled(true),
-    delta(0), last(0), acceleration(0),
-    button(Open), steps(stepsPerNotch),
-    pinA(A), pinB(B), pinBTN(BTN), pinsActive(active)
+ClickEncoder::ClickEncoder(
+    uint8_t A,
+    uint8_t B,
+    uint8_t BTN,
+    uint8_t stepsPerNotch,
+    bool active) : pinA(A),
+                   pinB(B),
+                   pinBTN(BTN),
+                   steps(stepsPerNotch),
+                   pinsActive(active),
+                   doubleClickEnabled(true),
+                   accelerationEnabled(true),
+                   delta(0),
+                   last(0),
+                   acceleration(0),
+                   button(Open)
 {
   uint8_t configType = (pinsActive == LOW) ? INPUT_PULLUP : INPUT;
   pinMode(pinA, configType);

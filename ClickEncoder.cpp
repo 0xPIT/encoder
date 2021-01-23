@@ -230,13 +230,17 @@ int16_t ClickEncoder::getValue(void)
   
   noInterrupts();
   val = delta;
+  
+  delta = val % steps;
+  val /= steps;
+//
+//  if (steps == 2) delta = val & 1;
+//  else if (steps == 4) delta = val & 3;
+//  else delta = 0; // default to 1 step per notch
+//
+//  if (steps == 4) val >>= 2;
+//  if (steps == 2) val >>= 1;
 
-  if (steps == 2) delta = val & 1;
-  else if (steps == 4) delta = val & 3;
-  else delta = 0; // default to 1 step per notch
-
-  if (steps == 4) val >>= 2;
-  if (steps == 2) val >>= 1;
 
   int16_t r = 0;
   int16_t accel = ((accelerationEnabled) ? (acceleration >> 8) : 0);

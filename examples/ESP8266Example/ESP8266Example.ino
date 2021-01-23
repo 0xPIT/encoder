@@ -35,7 +35,7 @@ void loop() {
   //Call Service in loop becasue using timer interrupts may affect ESP8266 WIFI
   //however call no more than 1 time per millisecond to reduce encoder bounce
   static uint32_t lastService = 0;
-  if (lastService + 1000 < micros()) {
+  if (micros() - lastService >= 1000) {
     lastService = micros();                
     encoder.service();  
   }

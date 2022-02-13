@@ -71,13 +71,14 @@ public:
 public:
   ClickEncoder(int8_t A, int8_t B, int8_t BTN = -1, 
                uint8_t stepsPerNotch = 4, bool active = LOW);
-			   
+         
 #ifndef WITHOUT_BUTTON
   explicit ClickEncoder(int8_t BTN, bool active = false);   // Depricated.  Use Digtial Button instead
 
 #endif
 
   void service(void);  
+  void resetEncoder(void);  
   int16_t getValue(void);
 
 #ifndef WITHOUT_BUTTON
@@ -153,7 +154,7 @@ protected:
   bool pinsActive;
   volatile int16_t delta;
   volatile int16_t last;
-  volatile uint8_t steps;
+  uint8_t steps;
   volatile uint16_t acceleration;
   bool accelerationEnabled;
 #if ENC_DECODER != ENC_NORMAL

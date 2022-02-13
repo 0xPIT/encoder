@@ -102,9 +102,9 @@ AnalogButton::AnalogButton(int8_t BTN, int16_t rangeLow, int16_t rangeHigh) : Cl
   analogInput = true;
   
   if (anlogActiveRangeLow > anlogActiveRangeHigh) {    // swap values if provided in the wrong order
-	  int16_t t = anlogActiveRangeLow;
-	  anlogActiveRangeLow = anlogActiveRangeHigh;
-	  anlogActiveRangeHigh = t;
+    int16_t t = anlogActiveRangeLow;
+    anlogActiveRangeLow = anlogActiveRangeHigh;
+    anlogActiveRangeHigh = t;
   }
 }
 #endif
@@ -117,12 +117,13 @@ void ClickEncoder::service(void)
   bool moved = false;
 
   if (pinA >= 0 && pinB >= 0) {
-  if (accelerationEnabled) { // decelerate every tick
-    acceleration -= ENC_ACCEL_DEC;
-    if (acceleration & 0x8000) { // handle overflow of MSB is set
-      acceleration = 0;
+    if (accelerationEnabled) { // decelerate every tick
+      acceleration -= ENC_ACCEL_DEC;
+      if (acceleration & 0x8000) { // handle overflow of MSB is set
+        acceleration = 0;
+      }
     }
-  }
+   
 
 #if ENC_DECODER == ENC_FLAKY
   last = (last << 2) & 0x0F;
@@ -173,20 +174,20 @@ void ClickEncoder::service(void)
   //
 #ifndef WITHOUT_BUTTON
   unsigned long currentMillis = millis();
-  if (currentMillis < lastButtonCheck) lastButtonCheck = 0;        // Handle case when millis() wraps back around to zero
+  unsigned long millisSinceLastCheck = currentMillis - lastButtonCheck;
   if ((pinBTN > 0 || (pinBTN == 0 && buttonOnPinZeroEnabled))        // check button only, if a pin has been provided
-      && ((currentMillis - lastButtonCheck) >= ENC_BUTTONINTERVAL))            // checking button is sufficient every 10-30ms
+      && (millisSinceLastCheck >= ENC_BUTTONINTERVAL))            // checking button is sufficient every 10-30ms
   { 
     lastButtonCheck = currentMillis;
 
     bool pinRead = getPinState();
-    
-    if (pinRead == pinsActive) { // key is down
-      keyDownTicks++;
-      if ((keyDownTicks > (buttonHoldTime / ENC_BUTTONINTERVAL)) && (buttonHeldEnabled)) {
-        button = Held;
-      }
-    }
+	
+											   
+					 
+																						  
+					  
+	   
+	 
 
     if (pinRead == !pinsActive) { // key is now up
       if (keyDownTicks > 1) {               //Make sure key was down through 1 complete tick to prevent random transients from registering as click
@@ -197,22 +198,29 @@ void ClickEncoder::service(void)
         else {
           #define ENC_SINGLECLICKONLY 1
           if (doubleClickTicks > ENC_SINGLECLICKONLY) {   // prevent trigger in single click mode
-            if (doubleClickTicks < (buttonDoubleClickTime / ENC_BUTTONINTERVAL)) {
+            if (doubleClickTicks < (buttonDoubleClickTime)) {
               button = DoubleClicked;
               doubleClickTicks = 0;
             }
           }
           else {
-            doubleClickTicks = (doubleClickEnabled) ? (buttonDoubleClickTime / ENC_BUTTONINTERVAL) : ENC_SINGLECLICKONLY;
+            doubleClickTicks = (doubleClickEnabled) ? (buttonDoubleClickTime) : ENC_SINGLECLICKONLY;
           }
         }
       }
 
       keyDownTicks = 0;
     }
+    
+    if (pinRead == pinsActive) { // key is down
+      if ((keyDownTicks > (buttonHoldTime)) && (buttonHeldEnabled)) {
+        button = Held;
+      }
+      keyDownTicks += millisSinceLastCheck;
+    }
   
     if (doubleClickTicks > 0) {
-      doubleClickTicks--;
+      doubleClickTicks -= min(millisSinceLastCheck, doubleClickTicks);
       if (doubleClickTicks == 0) {
         button = Clicked;
       }
@@ -227,23 +235,27 @@ void ClickEncoder::service(void)
 int16_t ClickEncoder::getValue(void)
 {
   int16_t val;
-  
+  int16_t r = 0;
+
   noInterrupts();
-  val = delta;
+  val = delta;  
   
   delta = val % steps;
-  val /= steps;
-//
-//  if (steps == 2) delta = val & 1;
-//  else if (steps == 4) delta = val & 3;
-//  else delta = 0; // default to 1 step per notch
-//
-//  if (steps == 4) val >>= 2;
-//  if (steps == 2) val >>= 1;
+			   
+  
+									
+										 
+												  
+  
+							  
+							  
 
 
-  int16_t r = 0;
+				
   int16_t accel = ((accelerationEnabled) ? (acceleration >> 8) : 0);
+  interrupts();
+  
+  val /= steps;
 
   if (val < 0) {
     r -= 1 + accel;
@@ -251,9 +263,25 @@ int16_t ClickEncoder::getValue(void)
   else if (val > 0) {
     r += 1 + accel;
   }
-  interrupts();
+			   
 
   return r;
+}
+
+// ----------------------------------------------------------------------------
+// This is used to reset the encoder.  If the encoder gets 'between' dedents 
+// (for example only needs 3 more dedents for next click instead of 4)
+// it could cause changing direction of encoder to do nothing on first turn
+// this could happen if teh encoder misses a reansition, or if the encoder
+// is being turned during initialization
+// This routine resets the encoder to re-sync it with the dedents
+
+void ClickEncoder::resetEncoder(void)
+{
+  noInterrupts();
+  delta = 0;
+  acceleration = 0;
+  interrupts();
 }
 
 // ----------------------------------------------------------------------------

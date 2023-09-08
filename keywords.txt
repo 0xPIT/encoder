@@ -1,4 +1,16 @@
+#######################################
+# Syntax Coloring Map for ClickEncoder
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
 ClickEncoder	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
 
 setAccelerationEnabled	KEYWORD2
 getAccelerationEnabled	KEYWORD2
@@ -11,3 +23,11 @@ setDoubleClickEnabled	KEYWORD2
 getDoubleClickEnabled	KEYWORD2
 setButtonHeldEnabled	KEYWORD2
 getButtonHeldEnabled	KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+#######################################
+# Constants (LITERAL1)
+#######################################

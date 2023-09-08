@@ -220,7 +220,7 @@ void ClickEncoder::service(void)
     }
   
     if (doubleClickTicks > 0) {
-      doubleClickTicks -= min(millisSinceLastCheck, doubleClickTicks);
+      doubleClickTicks -= min(millisSinceLastCheck, (unsigned long)doubleClickTicks);
       if (doubleClickTicks == 0) {
         button = Clicked;
       }
